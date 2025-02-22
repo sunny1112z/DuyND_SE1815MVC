@@ -16,15 +16,20 @@ namespace DuyND_SE1815_Data.Repositories.Implementations
             _context = context;
         }
 
-        public async Task<List<NewsArticle>> GetAllNews()
+        public async Task<List<NewsArticle>> GetAllNewsWithDetails()
         {
-            return await _context.NewsArticles.Include(n => n.Category).ToListAsync();
+            return await _context.NewsArticles
+                                 .Include(n => n.CreatedBy)
+                                 .Include(n => n.Category)
+                                 .ToListAsync();
         }
 
         public async Task<NewsArticle?> GetNewsById(string id)
         {
-            return await _context.NewsArticles.Include(n => n.Category)
-                                              .FirstOrDefaultAsync(n => n.NewsArticleId == id);
+            return await _context.NewsArticles
+                                 .Include(n => n.CreatedBy)
+                                 .Include(n => n.Category)
+                                 .FirstOrDefaultAsync(n => n.NewsArticleId == id);
         }
 
         public async Task<List<NewsArticle>> SearchNews(string keyword)

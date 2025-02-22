@@ -16,8 +16,9 @@ namespace DuyND_SE1815_Services.Services
 
         public async Task<List<NewsArticle>> GetAllNews()
         {
-            return await _newsRepository.GetAllNews();
+            return await _newsRepository.GetAllNewsWithDetails();
         }
+
 
         public async Task<NewsArticle?> GetNewsById(string id)
         {

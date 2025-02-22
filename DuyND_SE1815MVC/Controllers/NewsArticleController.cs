@@ -1,6 +1,7 @@
 ﻿using DuyND_SE1815_Data.Entities;
 using DuyND_SE1815_Services.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
@@ -17,12 +18,13 @@ namespace DuyND_SE1815MVC.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var newsArticles = (await _newsService.GetAllNews())  
-                                .Where(n => n.NewsStatus == true)    
+            var newsArticles = (await _newsService.GetAllNews())
+                                .Where(n => n.NewsStatus == true)
                                 .ToList();
 
             return View(newsArticles);
         }
+
         public async Task<IActionResult> Manage()
         {
             var newsArticles = await _newsService.GetAllNews();
@@ -35,6 +37,7 @@ namespace DuyND_SE1815MVC.Controllers
         {
             return View();
         }
+
 
         [HttpPost]
         public async Task<IActionResult> Create(NewsArticle article)

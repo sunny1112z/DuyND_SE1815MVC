@@ -4,9 +4,10 @@ using System.Threading.Tasks;
 
 namespace DuyND_SE1815_Data.Repositories.Interfaces
 {
+
     public interface INewsArticleRepository
     {
-        Task<List<NewsArticle>> GetAllNews();
+        Task<List<NewsArticle>> GetAllNewsWithDetails();
         Task<NewsArticle?> GetNewsById(string id);
         Task<List<NewsArticle>> SearchNews(string keyword);
         Task AddNews(NewsArticle news);
