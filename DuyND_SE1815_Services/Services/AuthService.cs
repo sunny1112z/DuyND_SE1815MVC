@@ -1,5 +1,6 @@
 ﻿using DuyND_SE1815_Data.Entities;
 using DuyND_SE1815_Data.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
@@ -15,6 +16,10 @@ namespace DuyND_SE1815_Services.Services
             _accountRepository = accountRepository;
             _configuration = configuration;
         }
+        public async Task<int?> GetIsActiveByEmail(string email)
+        {
+            return await _accountRepository.GetIsActiveByEmail(email);
+        }
 
         public async Task<SystemAccount?> AuthenticateUser(string email, string password)
         {
@@ -22,7 +27,7 @@ namespace DuyND_SE1815_Services.Services
             var adminEmail = _configuration["AdminAccount:Email"];
             var adminPassword = _configuration["AdminAccount:Password"];
 
-            // Kiểm tra nếu là tài khoản admin mặc định
+            
             if (email == adminEmail && password == adminPassword)
             {
                 return new SystemAccount

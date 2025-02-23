@@ -21,9 +21,27 @@ namespace DuyND_SE1815_Data.Repositories.Implementations
                 .FirstOrDefaultAsync(u => u.AccountEmail == email && u.AccountPassword == password);
         }
 
-        public async Task<SystemAccount?> GetById(int id)
+        public async Task<SystemAccount?> GetById(short id)
         {
             return await _context.SystemAccounts.FindAsync(id);
+        }
+        public async Task<int?> GetRoleById(short id)
+        {
+            var account = await _context.SystemAccounts
+                            .Where(sa => sa.AccountId == id)
+                            .Select(sa => sa.IsActive)
+                            .FirstOrDefaultAsync();
+
+            return account;
+        }
+        public async Task<int?> GetIsActiveByEmail(string  email)
+        {
+            var account = await _context.SystemAccounts
+                .Where(sa => sa.AccountEmail == email)
+                .Select(sa => sa.IsActive)
+                .FirstOrDefaultAsync();
+
+            return account;
         }
 
         public async Task<List<SystemAccount>> GetAllAccounts()
@@ -43,7 +61,7 @@ namespace DuyND_SE1815_Data.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAccount(int id)
+        public async Task DeleteAccount(short id)
         {
             var account = await _context.SystemAccounts.FindAsync(id);
             if (account != null)

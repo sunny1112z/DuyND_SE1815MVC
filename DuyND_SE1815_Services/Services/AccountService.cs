@@ -14,11 +14,14 @@ namespace DuyND_SE1815_Services.Services
             _accountRepository = accountRepository;
         }
 
-        public async Task<SystemAccount?> GetAccountById(int id)
+        public async Task<SystemAccount?> GetAccountById(short id)
         {
             return await _accountRepository.GetById(id);
         }
-
+        public async Task<int?> GetRoleById(short id)
+        {
+            return await _accountRepository.GetRoleById(id);
+        }
         public async Task<List<SystemAccount>> GetAllAccounts()
         {
             return await _accountRepository.GetAllAccounts();
@@ -34,7 +37,7 @@ namespace DuyND_SE1815_Services.Services
             await _accountRepository.UpdateAccount(account);
         }
 
-        public async Task DeleteAccount(int id)
+        public async Task DeleteAccount(short id)
         {
             await _accountRepository.DeleteAccount(id);
         }

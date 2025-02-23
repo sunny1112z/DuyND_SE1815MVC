@@ -44,6 +44,12 @@ namespace DuyND_SE1815_Data.Repositories.Implementations
             await _context.NewsArticles.AddAsync(news);
             await _context.SaveChangesAsync();
         }
+        public async Task<NewsArticle> GetLastNewsArticle()
+        {
+            return await _context.NewsArticles
+                .OrderByDescending(n => n.CreatedDate)
+                .FirstOrDefaultAsync();
+        }
 
         public async Task UpdateNews(NewsArticle news)
         {
@@ -53,12 +59,22 @@ namespace DuyND_SE1815_Data.Repositories.Implementations
 
         public async Task DeleteNews(string id)
         {
-            var news = await _context.NewsArticles.FindAsync(id);
-            if (news != null)
+         
+            if (string.IsNullOrEmpty(id)) throw new ArgumentNullException(nameof(id));
+
+            var news = await _context.NewsArticles
+                .Include(n => n.Tags)
+                .FirstOrDefaultAsync(n => n.NewsArticleId == id);
+
+            if (news == null) throw new KeyNotFoundException("News article not found!");
+
+            if (news.Tags.Any())
             {
-                _context.NewsArticles.Remove(news);
-                await _context.SaveChangesAsync();
+                throw new InvalidOperationException("Cannot delete news article because it has associated tags.");
             }
+
+            _context.NewsArticles.Remove(news);
+            await _context.SaveChangesAsync();
         }
     }
 }

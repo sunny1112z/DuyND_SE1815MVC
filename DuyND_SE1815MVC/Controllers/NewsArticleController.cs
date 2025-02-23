@@ -45,7 +45,7 @@ namespace DuyND_SE1815MVC.Controllers
             if (ModelState.IsValid)
             {
                 await _newsService.AddNews(article);
-                return RedirectToAction("Index");
+                return RedirectToAction("Manage");
             }
             return View(article);
         }
@@ -54,8 +54,21 @@ namespace DuyND_SE1815MVC.Controllers
         {
             var article = await _newsService.GetNewsById(id);
             if (article == null) return NotFound();
+         
             return View(article);
         }
+        [HttpGet]
+        public async Task<IActionResult> Details(string id)
+        {
+            var article = await _newsService.GetNewsById(id);
+            if (article == null) return NotFound();
+
+            return View(article); 
+        }
+
+
+
+
 
         [HttpPost]
         public async Task<IActionResult> Edit(NewsArticle article)
@@ -63,7 +76,7 @@ namespace DuyND_SE1815MVC.Controllers
             if (ModelState.IsValid)
             {
                 await _newsService.UpdateNews(article);
-                return RedirectToAction("Index");
+                return RedirectToAction("Manage");
             }
             return View(article);
         }
@@ -78,7 +91,18 @@ namespace DuyND_SE1815MVC.Controllers
         [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            await _newsService.DeleteNews(id);
+            try
+            {
+                
+                await _newsService.DeleteNews(id);
+            }
+            catch (Exception e)
+            {
+                TempData["ErrorMessage"] = e.Message;
+                return View("CannotDelete");
+
+            }
+            
             return RedirectToAction("Index");
         }
     }

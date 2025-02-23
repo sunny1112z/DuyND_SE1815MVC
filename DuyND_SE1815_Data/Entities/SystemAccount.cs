@@ -15,6 +15,7 @@ public partial class SystemAccount
     public int? AccountRole { get; set; }
 
     public string? AccountPassword { get; set; }
+    public int? IsActive { get; set; }
 
     public virtual ICollection<NewsArticle> NewsArticles { get; set; } = new List<NewsArticle>();
 }

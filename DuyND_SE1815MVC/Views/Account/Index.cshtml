@@ -25,6 +25,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.AccountPassword)
             </th>
+            <th>
+                @Html.DisplayNameFor(model => model.IsActive)
+            </th>
             <th></th>
         </tr>
     </thead>
@@ -43,6 +46,10 @@
             <td>
                 @Html.DisplayFor(modelItem => item.AccountPassword)
             </td>
+                <td>
+                    @(item.IsActive == 1 ? "Active" : "Inactive")
+                </td>
+
             <td>
                 <a asp-action="Edit" asp-route-id="@item.AccountId">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.AccountId">Details</a> |

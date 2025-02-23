@@ -26,27 +26,35 @@ namespace DuyND_SE1815MVC.Controllers
         public async Task<IActionResult> Login(string email, string password)
         {
             var user = await _authService.AuthenticateUser(email, password);
-
+            var userRole = await _authService.GetIsActiveByEmail(email);
             if (user == null)
             {
                 ViewBag.Error = "Invalid email or password";
                 return View();
             }
+            if (userRole == 1)
+            {
+                HttpContext.Session.SetInt32("UserId", user.AccountId);
+                HttpContext.Session.SetInt32("UserRole", user.AccountRole ?? -1);
+                if (user.AccountRole == 0)
+                {
+                    return RedirectToAction("Index", "Account");
+                }
+                if (user.AccountRole == 1)
+                {
+                    return RedirectToAction("Index", "Category");
+                }
+                if (user.AccountRole == 2)
+                {
+                    return RedirectToAction("Manage", "NewsArticle");
+                }
 
-            // Lưu user vào session
-            HttpContext.Session.SetInt32("UserId", user.AccountId);
-            HttpContext.Session.SetInt32("UserRole", user.AccountRole ?? -1);
-            if (user.AccountRole == 0)
-            {
-                return RedirectToAction("Index", "Account");
             }
-            if (user.AccountRole == 1)
+            else
             {
-                return RedirectToAction("Index", "Category");
-            }
-            if (user.AccountRole == 2)
-            {
-                return RedirectToAction("Manage", "NewsArticle");
+                TempData["ErrorMessage"] = "Your account has been locked";
+                return View("CannotLogin");
+
             }
             return RedirectToAction("Index", "NewsArticle");
         }

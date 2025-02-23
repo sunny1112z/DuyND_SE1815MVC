@@ -32,9 +32,18 @@ namespace DuyND_SE1815_Services.Services
 
         public async Task AddNews(NewsArticle news)
         {
-            news.NewsArticleId = Guid.NewGuid().ToString(); 
+            if (news == null) throw new ArgumentNullException(nameof(news));
+
+          
+            var lastNews = await _newsRepository.GetLastNewsArticle();
+
+            int lastId = (lastNews != null && int.TryParse(lastNews.NewsArticleId, out int parsedId)) ? parsedId : 0;
+
+            int newId = lastId + 1;
+            news.NewsArticleId = newId.ToString();
             await _newsRepository.AddNews(news);
         }
+
 
         public async Task UpdateNews(NewsArticle news)
         {

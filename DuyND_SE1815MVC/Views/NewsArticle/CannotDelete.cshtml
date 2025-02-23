@@ -1,0 +1,12 @@
+﻿@{
+    ViewData["Title"] = "CannotDelete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    <div class=" alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+<div>
+    <a asp-action="Manage">Back to List</a>
+</div>

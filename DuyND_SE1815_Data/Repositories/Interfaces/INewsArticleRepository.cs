@@ -13,5 +13,7 @@ namespace DuyND_SE1815_Data.Repositories.Interfaces
         Task AddNews(NewsArticle news);
         Task UpdateNews(NewsArticle news);
         Task DeleteNews(string id);
+        Task<NewsArticle> GetLastNewsArticle();
+
     }
 }
