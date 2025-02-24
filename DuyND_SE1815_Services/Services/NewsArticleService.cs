@@ -1,5 +1,6 @@
 ﻿using DuyND_SE1815_Data.Entities;
 using DuyND_SE1815_Data.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -8,16 +9,18 @@ namespace DuyND_SE1815_Services.Services
     public class NewsArticleService
     {
         private readonly INewsArticleRepository _newsRepository;
-
-        public NewsArticleService(INewsArticleRepository newsRepository)
+        private readonly EmailService _emailService;
+        public NewsArticleService(INewsArticleRepository newsRepository, EmailService emailService) 
         {
             _newsRepository = newsRepository;
+            _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
         }
 
         public async Task<List<NewsArticle>> GetAllNews()
         {
             return await _newsRepository.GetAllNewsWithDetails();
         }
+        
 
 
         public async Task<NewsArticle?> GetNewsById(string id)
@@ -41,8 +44,19 @@ namespace DuyND_SE1815_Services.Services
 
             int newId = lastId + 1;
             news.NewsArticleId = newId.ToString();
-            await _newsRepository.AddNews(news);
+            try
+            {
+                await _newsRepository.AddNews(news);
+               
+                Console.WriteLine($"News '{news.NewsTitle}' added to database successfully.");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to add news to database: {ex.Message}");
+            }
+
         }
+
 
 
         public async Task UpdateNews(NewsArticle news)
@@ -54,5 +68,7 @@ namespace DuyND_SE1815_Services.Services
         {
             await _newsRepository.DeleteNews(id);
         }
+        public async Task<List<NewsArticle>> GetNewsByAuthorId(short? authorId) => await _newsRepository.GetNewsByAuthorId(authorId);
+        public async Task<List<NewsArticle>> GetReportByDateRange(DateTime startDate, DateTime endDate) => await _newsRepository.GetReportByDateRange(startDate, endDate);
     }
 }

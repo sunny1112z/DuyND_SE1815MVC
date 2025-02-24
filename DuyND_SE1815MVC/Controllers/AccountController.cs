@@ -40,6 +40,7 @@ namespace DuyND_SE1815MVC.Controllers
 
         // POST: Account/Create
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SystemAccount account)
         {
             if (ModelState.IsValid)
@@ -67,17 +68,20 @@ namespace DuyND_SE1815MVC.Controllers
         {
             if (ModelState.IsValid)
             {
+               
                 int? currentRole = await _accountService.GetRoleById(account.AccountId);
+                Console.WriteLine($"Current Role: {currentRole}");
+
                 int? newRole = account.AccountRole;
 
-                // 1️⃣ Không thể thay đổi vai trò của Admin
+            
                 if (currentRole == 0 && newRole != 0)
                 {
                     ModelState.AddModelError("", "Không thể thay đổi vai trò của Admin.");
                     return View(account);
                 }
 
-                // 2️⃣ Staff ↔ Lecturer được phép đổi, nhưng không thể cấp quyền Admin
+                
                 if ((currentRole == 1 || currentRole == 2) && newRole == 0)
                 {
                     ModelState.AddModelError("", "Bạn không có quyền cấp quyền Admin.");

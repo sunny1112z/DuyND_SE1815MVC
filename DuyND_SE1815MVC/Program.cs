@@ -12,7 +12,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<FunewsManagementContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("FUNewsManagementDB")));
 
-builder.Services.AddScoped<FunewsManagementContext>();
+
 
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
@@ -23,6 +23,8 @@ builder.Services.AddScoped<NewsArticleService>();
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<EmailService, EmailService>();
+
 
 
 builder.Services.AddSession();

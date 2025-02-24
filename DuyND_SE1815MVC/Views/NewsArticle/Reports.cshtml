@@ -1,0 +1,39 @@
+﻿@model IEnumerable<DuyND_SE1815_Data.Entities.NewsArticle>
+
+@{
+    ViewData["Title"] = "Reports";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Reports</h2>
+
+<form method="post" action="@Url.Action("Reports", "NewsArticle")">
+    <label for="startDate">Start Date:</label>
+    <input type="date" name="startDate" required />
+
+    <label for="endDate">End Date:</label>
+    <input type="date" name="endDate" required />
+
+    <button type="submit">Generate Report</button>
+</form>
+
+@if (Model != null && Model.Any())
+{
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Created Date</th>
+        </tr>
+        @foreach (var news in Model)
+        {
+            <tr>
+                <td>@news.NewsTitle</td>
+                <td>@news.CreatedDate</td>
+            </tr>
+        }
+    </table>
+}
+else
+{
+    <p>No reports available.</p>
+}

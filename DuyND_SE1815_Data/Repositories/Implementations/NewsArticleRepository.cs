@@ -34,7 +34,8 @@ namespace DuyND_SE1815_Data.Repositories.Implementations
 
         public async Task<List<NewsArticle>> SearchNews(string keyword)
         {
-            return await _context.NewsArticles
+            return await _context.NewsArticles. Include(n => n.Category)
+        .Include(n => n.CreatedBy)
                 .Where(n => n.NewsTitle.Contains(keyword) || n.NewsContent.Contains(keyword))
                 .ToListAsync();
         }
@@ -44,12 +45,15 @@ namespace DuyND_SE1815_Data.Repositories.Implementations
             await _context.NewsArticles.AddAsync(news);
             await _context.SaveChangesAsync();
         }
-        public async Task<NewsArticle> GetLastNewsArticle()
+        public async Task<NewsArticle?> GetLastNewsArticle()
         {
-            return await _context.NewsArticles
-                .OrderByDescending(n => n.CreatedDate)
-                .FirstOrDefaultAsync();
+            var newsArticles = await _context.NewsArticles.ToListAsync();
+
+            return newsArticles
+                .OrderByDescending(n => int.TryParse(n.NewsArticleId, out int id) ? id : 0)
+                .FirstOrDefault();
         }
+
 
         public async Task UpdateNews(NewsArticle news)
         {
@@ -75,6 +79,21 @@ namespace DuyND_SE1815_Data.Repositories.Implementations
 
             _context.NewsArticles.Remove(news);
             await _context.SaveChangesAsync();
+        }
+        public async Task<List<NewsArticle>> GetNewsByAuthorId(short? authorId)
+        {
+            return await _context.NewsArticles
+                .Include(c => c.Category)
+                .Where(n => n.CreatedById == authorId)
+                .ToListAsync();
+        }
+
+        public async Task<List<NewsArticle>> GetReportByDateRange(DateTime startDate, DateTime endDate)
+        {
+            return await _context.NewsArticles
+                .Where(n => n.CreatedDate >= startDate && n.CreatedDate <= endDate)
+                .OrderByDescending(n => n.CreatedDate)
+                .ToListAsync();
         }
     }
 }

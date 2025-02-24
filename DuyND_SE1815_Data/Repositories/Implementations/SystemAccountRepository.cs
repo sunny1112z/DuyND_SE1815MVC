@@ -28,12 +28,12 @@ namespace DuyND_SE1815_Data.Repositories.Implementations
         public async Task<int?> GetRoleById(short id)
         {
             var account = await _context.SystemAccounts
-                            .Where(sa => sa.AccountId == id)
-                            .Select(sa => sa.IsActive)
+                            .Where(a => a.AccountId == id)
+                            .Select(a => a.AccountRole)
                             .FirstOrDefaultAsync();
-
             return account;
         }
+
         public async Task<int?> GetIsActiveByEmail(string  email)
         {
             var account = await _context.SystemAccounts
@@ -54,6 +54,13 @@ namespace DuyND_SE1815_Data.Repositories.Implementations
             await _context.SystemAccounts.AddAsync(account);
             await _context.SaveChangesAsync();
         }
+        public async Task<SystemAccount?> GetLastAccountId()
+        {
+            return await _context.SystemAccounts
+                .OrderByDescending(a => a.AccountId) 
+                .FirstOrDefaultAsync();
+        }
+
 
         public async Task UpdateAccount(SystemAccount account)
         {

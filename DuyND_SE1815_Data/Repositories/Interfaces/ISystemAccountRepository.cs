@@ -14,5 +14,7 @@ namespace DuyND_SE1815_Data.Repositories.Interfaces
         Task AddAccount(SystemAccount account);
         Task UpdateAccount(SystemAccount account);
         Task DeleteAccount(short id);
+        Task<SystemAccount?> GetLastAccountId();
+
     }
 }

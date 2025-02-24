@@ -14,6 +14,8 @@ namespace DuyND_SE1815_Data.Repositories.Interfaces
         Task UpdateNews(NewsArticle news);
         Task DeleteNews(string id);
         Task<NewsArticle> GetLastNewsArticle();
+        Task<List<NewsArticle>> GetNewsByAuthorId(short? authorId);
+        Task<List<NewsArticle>> GetReportByDateRange(DateTime startDate, DateTime endDate);
 
     }
 }

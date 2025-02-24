@@ -10,4 +10,8 @@
     <ProjectReference Include="..\DuyND_SE1815_Data\DuyND_SE1815_Data.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="4.10.0" />
+  </ItemGroup>
+
 </Project>

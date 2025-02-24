@@ -10,10 +10,11 @@ namespace DuyND_SE1815MVC.Controllers
     public class NewsArticleController : Controller
     {
         private readonly NewsArticleService _newsService;
-
-        public NewsArticleController(NewsArticleService newsService)
+        private readonly EmailService _emailService;
+        public NewsArticleController(NewsArticleService newsService , EmailService emailService)
         {
             _newsService = newsService;
+            _emailService = emailService;
         }
 
         public async Task<IActionResult> Index()
@@ -28,7 +29,7 @@ namespace DuyND_SE1815MVC.Controllers
         public async Task<IActionResult> Manage()
         {
             var newsArticles = await _newsService.GetAllNews();
-                                
+
 
             return View(newsArticles);
         }
@@ -45,16 +46,36 @@ namespace DuyND_SE1815MVC.Controllers
             if (ModelState.IsValid)
             {
                 await _newsService.AddNews(article);
+
+            
+                string subject = "New Article Published: " + article.NewsTitle;
+                string body = $@"
+                  <h2>New Article Published</h2>
+                  <p><strong>Title:</strong> {article.NewsTitle}</p>
+                  <p><strong>Content:</strong> {article.NewsContent}</p>
+                  <p><a href='https://localhost:7221/NewsArticle/Details/{article.NewsArticleId}'>View Article</a></p>";
+
+                try
+                {
+                    await _emailService.SendEmailAsync("duyndhe170848@fpt.edu.vn", subject, body);
+                    Console.WriteLine("Email sent successfully.");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to send email: {ex.Message}");
+                }
+
                 return RedirectToAction("Manage");
             }
             return View(article);
         }
 
+
         public async Task<IActionResult> Edit(string id)
         {
             var article = await _newsService.GetNewsById(id);
             if (article == null) return NotFound();
-         
+
             return View(article);
         }
         [HttpGet]
@@ -63,10 +84,23 @@ namespace DuyND_SE1815MVC.Controllers
             var article = await _newsService.GetNewsById(id);
             if (article == null) return NotFound();
 
-            return View(article); 
+            return View(article);
         }
 
 
+        [HttpGet]
+        public async Task<IActionResult> SearchNews(string key)
+        {
+            var articles = await _newsService.SearchNews(key);
+
+            if (articles == null || !articles.Any())
+            {
+                ModelState.AddModelError("", "Không tìm thấy bài viết nào!");
+                return View(new List<NewsArticle>()); 
+            }
+
+            return View(articles);
+        }
 
 
 
@@ -93,7 +127,7 @@ namespace DuyND_SE1815MVC.Controllers
         {
             try
             {
-                
+
                 await _newsService.DeleteNews(id);
             }
             catch (Exception e)
@@ -102,9 +136,19 @@ namespace DuyND_SE1815MVC.Controllers
                 return View("CannotDelete");
 
             }
-            
+
             return RedirectToAction("Index");
+        }
+        [HttpGet("Reports")]
+        public IActionResult Reports()
+        {
+            return View();
+        }
+        [HttpPost("Reports")]
+        public async Task<IActionResult> Reports(DateTime startDate, DateTime endDate)
+        {
+            var reportData = await _newsService.GetReportByDateRange(startDate, endDate);
+            return View(reportData);
         }
     }
 }
- 

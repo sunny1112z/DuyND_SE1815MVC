@@ -5,57 +5,59 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="text-primary">System Accounts</h2>
+        <a asp-action="Create" class="btn btn-success shadow-sm"><i class="bi bi-plus-circle"></i> Create New</a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.AccountName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AccountEmail)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AccountRole)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AccountPassword)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IsActive)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.AccountName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AccountEmail)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AccountRole)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AccountPassword)
-            </td>
-                <td>
-                    @(item.IsActive == 1 ? "Active" : "Inactive")
-                </td>
-
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.AccountId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.AccountId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.AccountId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <table class="table table-hover table-bordered shadow-sm">
+        <thead class="table-dark text-center">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.AccountName)</th>
+                <th>@Html.DisplayNameFor(model => model.AccountEmail)</th>
+                <th>@Html.DisplayNameFor(model => model.AccountRole)</th>
+                <th>@Html.DisplayNameFor(model => model.AccountPassword)</th>
+                <th>@Html.DisplayNameFor(model => model.IsActive)</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.AccountName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.AccountEmail)</td>
+                    <td>
+                        @switch (item.AccountRole)
+                        {
+                            case 0:
+                                <span class="badge bg-primary">Admin</span>
+                                ; break;
+                            case 1:
+                                <span class="badge bg-info text-dark">Staff</span>
+                                ; break;
+                            case 2:
+                                <span class="badge bg-warning text-dark">Lecturer</span>
+                                ; break;
+                        }
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.AccountPassword)</td>
+                    <td>
+                        <span class="badge @(item.IsActive == 1 ? "bg-success" : "bg-danger")">
+                            @(item.IsActive == 1 ? "Active" : "Inactive")
+                        </span>
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.AccountId" class="btn btn-warning btn-sm">
+                            <i class="bi bi-pencil"></i> Edit
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.AccountId" class="btn btn-danger btn-sm">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

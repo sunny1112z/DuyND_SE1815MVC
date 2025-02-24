@@ -29,8 +29,22 @@ namespace DuyND_SE1815_Services.Services
 
         public async Task AddAccount(SystemAccount account)
         {
-            await _accountRepository.AddAccount(account);
+            if (account == null) throw new ArgumentNullException(nameof(account));
+
+            var lastAccount = await _accountRepository.GetLastAccountId();   
+            short lastId = lastAccount?.AccountId ?? 0;
+            short newId = (short)(lastId + 1);
+            account.AccountId = newId;
+            try
+            {
+                await _accountRepository.AddAccount(account);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Failed to add account to database: {ex.Message}");
+            }
         }
+
 
         public async Task UpdateAccount(SystemAccount account)
         {

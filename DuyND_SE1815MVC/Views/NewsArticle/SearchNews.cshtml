@@ -1,16 +1,13 @@
 ﻿@model IEnumerable<DuyND_SE1815_Data.Entities.NewsArticle>
 @using Microsoft.AspNetCore.Http
 @{
-	ViewData["Title"] = "Index";
+	ViewData["Title"] = "Search New";
 	Layout = "~/Views/Shared/_Layout.cshtml";
-	var accountType = Context.Session.GetInt32("UserRole");
+
 }
 
 <h1>New</h1>
-@if (accountType == 0)
-{
-	<a asp-action="Reports">Reports New</a>
-}
+
 <form method="get" asp-action="SearchNews">
 	<input type="text" name="key" placeholder="Nhập từ khóa tìm kiếm..." class="form-control" />
 	<button type="submit" class="btn btn-primary mt-2">Tìm kiếm</button>

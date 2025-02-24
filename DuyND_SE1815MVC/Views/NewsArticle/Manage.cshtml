@@ -7,7 +7,10 @@
 
 <h1>Manage</h1>
 
-
+<form method="get" asp-action="SearchNews">
+    <input type="text" name="key" placeholder="Nhập từ khóa tìm kiếm..." class="form-control" />
+    <button type="submit" class="btn btn-primary mt-2">Tìm kiếm</button>
+</form>
 <p>
     <a asp-action="Create">Create New</a>
 </p>
@@ -77,10 +80,10 @@
                     @Html.DisplayFor(modelItem => item.ModifiedDate)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Category.CategoryDesciption)
+                    @Html.DisplayFor(modelItem => item.Category.CategoryName)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.CreatedBy.AccountId)
+                    @Html.DisplayFor(modelItem => item.CreatedBy.AccountName)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.NewsArticleId">Edit</a> |
