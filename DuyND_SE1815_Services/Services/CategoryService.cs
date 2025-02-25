@@ -34,9 +34,9 @@ namespace DuyND_SE1815_Services
             await _categoryRepository.Update(category);
         }
 
-        public async Task DeleteCategory(Category category)
+        public async Task DeleteCategory(short id)
         {
-            await _categoryRepository.Delete(category);
+            await _categoryRepository.Delete(id);
         }
     }
 }

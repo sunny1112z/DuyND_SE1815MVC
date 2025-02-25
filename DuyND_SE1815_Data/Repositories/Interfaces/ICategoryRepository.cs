@@ -10,7 +10,7 @@ namespace DuyND_SE1815_Data.Repositories.Interfaces
         Task<Category?> GetByIdAsync(short id);
         Task AddAsync(Category category);
         Task Update(Category category);
-        Task Delete(Category category);
+        Task Delete(short id);
         Task<IEnumerable<Category>> GetCategoriesByNameAsync(string name);
     }
 }

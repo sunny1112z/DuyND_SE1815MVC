@@ -1,5 +1,6 @@
 ﻿using DuyND_SE1815_Data.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DuyND_SE1815MVC.Controllers
 {
@@ -51,7 +52,7 @@ namespace DuyND_SE1815MVC.Controllers
                 {
                     c.CategoryId,
                     c.CategoryName,
-                    c.CategoryDesciption, 
+                    c.CategoryDesciption,
                     c.ParentCategoryId,
                     c.IsActive
                 })
@@ -64,20 +65,39 @@ namespace DuyND_SE1815MVC.Controllers
 
             return Json(category);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetAllCategories()
+        {
+            var categories = await _context.Categories
+                .Select(c => new { c.CategoryId, c.CategoryName })
+                .ToListAsync();
+
+            return Ok(categories);
+        }
 
         // POST: Category/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Create(Category category)
+        public async Task<IActionResult> Create([FromForm] Category category)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Categories.Add(category);
-                _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
+                return BadRequest("Dữ liệu không hợp lệ!");
             }
-            return View(category);
+
+            if (category.ParentCategoryId != null)
+            {
+                var parentCategory = await _context.Categories.FindAsync(category.ParentCategoryId);
+                if (parentCategory == null)
+                {
+                    return BadRequest("Parent Category không tồn tại!");
+                }
+            }
+
+            _context.Categories.Add(category);
+            await _context.SaveChangesAsync();
+            return Ok(new { message = "Danh mục đã được tạo thành công!" });
         }
+
 
         // GET: Category/Edit/5
         public IActionResult Edit(int? id)
@@ -149,7 +169,7 @@ namespace DuyND_SE1815MVC.Controllers
 
 
         // GET: Category/Delete/5
-        public IActionResult Delete(int? id)
+        public IActionResult Delete(short? id)
         {
             if (id == null)
             {
@@ -168,16 +188,26 @@ namespace DuyND_SE1815MVC.Controllers
         // POST: Category/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(short id)
         {
-            var category = _context.Categories.Find(id);
-            if (category == null)
+            try
             {
-                return NotFound();
+                var category = _context.Categories.Find(id);
+                if (category == null)
+                {
+                    return NotFound();
+                }
+
+                _context.Categories.Remove(category);
+                _context.SaveChanges();
+            }
+            catch (Exception e)
+            {
+                TempData["ErrorMessage"] = e.Message;
+                return View("CannotDelete");
+
             }
 
-            _context.Categories.Remove(category);
-            _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
     }

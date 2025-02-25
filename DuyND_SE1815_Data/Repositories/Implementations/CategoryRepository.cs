@@ -1,6 +1,7 @@
 ﻿using DuyND_SE1815_Data.Entities;
 using DuyND_SE1815_Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -38,11 +39,24 @@ namespace DuyND_SE1815_Data.Repositories.Implementations
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(Category category)
+        public async Task Delete(short id)
         {
+            if (id == 0) throw new ArgumentNullException(nameof(id));
+
+            var category = await _context.Categories
+                .Include(n => n.NewsArticles) 
+                .FirstOrDefaultAsync(n => n.CategoryId == id);
+
+            if (category == null)
+                throw new KeyNotFoundException("Category not found!");
+
+            if (category.NewsArticles.Any())
+                throw new InvalidOperationException("Cannot delete category because it has associated News.");
+
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
         }
+
 
         public async Task<IEnumerable<Category>> GetCategoriesByNameAsync(string name)
         {
