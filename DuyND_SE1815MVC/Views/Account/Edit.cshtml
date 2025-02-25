@@ -42,11 +42,11 @@
                     <span asp-validation-for="AccountRole" class="text-danger"></span>
                 </div>
 
-                <div class="mb-3">
-                    <label asp-for="AccountPassword" class="form-label fw-bold"></label>
+                <div class="mb-3" hidden>
+                    <label asp-for="AccountPassword" class="form-label fw-bold">Mật khẩu</label>
                     <div class="input-group">
                         <span class="input-group-text"><i class="bi bi-lock"></i></span>
-                        <input asp-for="AccountPassword" type="password" class="form-control" />
+                        <input asp-for="AccountPassword" type="password" class="form-control" value="@Model.AccountPassword" />
                     </div>
                     <span asp-validation-for="AccountPassword" class="text-danger"></span>
                 </div>

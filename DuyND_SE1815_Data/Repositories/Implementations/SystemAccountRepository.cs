@@ -1,6 +1,7 @@
 ﻿using DuyND_SE1815_Data.Entities;
 using DuyND_SE1815_Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -13,6 +14,12 @@ namespace DuyND_SE1815_Data.Repositories.Implementations
         public SystemAccountRepository(FunewsManagementContext context)
         {
             _context = context;
+        }
+        public async Task<List<SystemAccount>> SearchAccounts(string keyword)
+        {
+            return await _context.SystemAccounts
+                .Where(a => a.AccountName.Contains(keyword) || a.AccountEmail.Contains(keyword))
+                .ToListAsync();
         }
 
         public async Task<SystemAccount?> GetByEmailAndPassword(string email, string password)
@@ -34,11 +41,20 @@ namespace DuyND_SE1815_Data.Repositories.Implementations
             return account;
         }
 
-        public async Task<int?> GetIsActiveByEmail(string  email)
+        public async Task<int?> GetIsActiveByEmail(string email)
         {
             var account = await _context.SystemAccounts
                 .Where(sa => sa.AccountEmail == email)
                 .Select(sa => sa.IsActive)
+                .FirstOrDefaultAsync();
+
+            return account;
+        }
+        public async Task<string?> GetPasswordByEmail(string email)
+        {
+            var account = await _context.SystemAccounts
+                .Where(sa => sa.AccountEmail == email)
+                .Select(sa => sa.AccountPassword)
                 .FirstOrDefaultAsync();
 
             return account;
@@ -57,7 +73,7 @@ namespace DuyND_SE1815_Data.Repositories.Implementations
         public async Task<SystemAccount?> GetLastAccountId()
         {
             return await _context.SystemAccounts
-                .OrderByDescending(a => a.AccountId) 
+                .OrderByDescending(a => a.AccountId)
                 .FirstOrDefaultAsync();
         }
 
@@ -67,15 +83,24 @@ namespace DuyND_SE1815_Data.Repositories.Implementations
             _context.SystemAccounts.Update(account);
             await _context.SaveChangesAsync();
         }
-
         public async Task DeleteAccount(short id)
         {
-            var account = await _context.SystemAccounts.FindAsync(id);
-            if (account != null)
+              var account = await _context.SystemAccounts
+                .FirstOrDefaultAsync(n => n.AccountId == id);
+            if (account == null)
             {
-                _context.SystemAccounts.Remove(account);
-                await _context.SaveChangesAsync();
+                throw new KeyNotFoundException(" Account not found!");
             }
+
+
+            if (account.NewsArticles.Any())
+            {
+                throw new InvalidOperationException(" Cannot delete Account because it has associated NewsArticles.");
+            }
+
+
+            _context.SystemAccounts.Remove(account);
+            await _context.SaveChangesAsync();
         }
     }
 }

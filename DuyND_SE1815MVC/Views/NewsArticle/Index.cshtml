@@ -1,61 +1,75 @@
 ﻿@model IEnumerable<DuyND_SE1815_Data.Entities.NewsArticle>
 @using Microsoft.AspNetCore.Http
 @{
-	ViewData["Title"] = "Index";
-	Layout = "~/Views/Shared/_Layout.cshtml";
-	var accountType = Context.Session.GetInt32("UserRole");
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var accountType = Context.Session.GetInt32("UserRole");
 }
 
-<h1>New</h1>
-@if (accountType == 0)
-{
-	<a asp-action="Reports">Reports New</a>
-}
-<form method="get" asp-action="SearchNews">
-	<input type="text" name="key" placeholder="Nhập từ khóa tìm kiếm..." class="form-control" />
-	<button type="submit" class="btn btn-primary mt-2">Tìm kiếm</button>
-</form>
-<table class="table">
-	<thead>
-		<tr>
-			<th>
-				@Html.DisplayNameFor(model => model.NewsTitle)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.Headline)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.NewsContent)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.Category)
-			</th>
-			<th>
-				@Html.DisplayNameFor(model => model.CreatedBy)
-			</th>
-		</tr>
-	</thead>
-	<tbody>
-		@foreach (var item in Model)
-		{
-			<tr>
-				<td>
-					@Html.DisplayFor(modelItem => item.NewsTitle)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.Headline)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.NewsContent)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.Category.CategoryName)
-				</td>
-				<td>
-					@Html.DisplayFor(modelItem => item.CreatedBy.AccountName)
-				</td>
+<div class="container mt-4">
+    <h1 class="mb-4 text-primary">News</h1>
 
-			</tr>
-		}
-	</tbody>
-</table>
+    @if (accountType == 0)
+    {
+        <a asp-action="Reports" class="btn btn-warning mb-3">Reports New</a>
+    }
+
+    <div class="card p-3 mb-4">
+        <form method="get" asp-action="SearchNews" class="d-flex">
+            <input type="text" name="key" placeholder="Nhập từ khóa tìm kiếm..." class="form-control me-2" />
+            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+        </form>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.NewsTitle)</th>
+                    <th>@Html.DisplayNameFor(model => model.Headline)</th>
+                    <th>@Html.DisplayNameFor(model => model.NewsContent)</th>
+                    <th>@Html.DisplayNameFor(model => model.Category)</th>
+                    <th>@Html.DisplayNameFor(model => model.CreatedBy)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.NewsTitle)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Headline)</td>
+                        <td>
+                            <div class="news-content" style="max-height: 100px; overflow: hidden;" data-full-height="false">
+                                @Html.DisplayFor(modelItem => item.NewsContent)
+                            </div>
+                            <button class="btn btn-link p-0 d-none" onclick="toggleContent(this)">Xem thêm</button>
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.Category.CategoryName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.CreatedBy.AccountName)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".news-content").forEach(function(content) {
+            if (content.scrollHeight > 100) {
+                content.nextElementSibling.classList.remove("d-none");
+            }
+        });
+    });
+
+    function toggleContent(button) {
+        var content = button.previousElementSibling;
+        if (content.style.maxHeight === "100px") {
+            content.style.maxHeight = "none";
+            button.textContent = "Thu gọn";
+        } else {
+            content.style.maxHeight = "100px";
+            button.textContent = "Xem thêm";
+        }
+    }
+</script>

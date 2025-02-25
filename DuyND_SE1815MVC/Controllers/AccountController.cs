@@ -43,6 +43,10 @@ namespace DuyND_SE1815MVC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(SystemAccount account)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(account); 
+            }
             if (ModelState.IsValid)
             {
                 await _accountService.AddAccount(account);
@@ -110,11 +114,37 @@ namespace DuyND_SE1815MVC.Controllers
         }
 
         // POST: Account/Delete/5
-        [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(short id)
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirm(short id)
         {
-            await _accountService.DeleteAccount(id);
-            return RedirectToAction(nameof(Index));
+            try
+            {
+
+                await _accountService.DeleteAccount(id);
+            }
+            catch (Exception e)
+            {
+                TempData["ErrorMessage"] = e.Message;
+                return View("CannotDelete");
+
+            }
+
+            return RedirectToAction("Index");
         }
+        [HttpGet]
+        public async Task<IActionResult> SearchAccounts(string key) 
+        {
+            var accounts = await _accountService.SystemAccounts(key);
+
+            if (accounts == null || !accounts.Any())
+            {
+                ModelState.AddModelError("", "Không tìm thấy tài khoản nào!");
+                return View("SearchAccounts", new List<SystemAccount>());
+            }
+
+            return View("SearchAccounts", accounts);
+        }
+
+
     }
 }

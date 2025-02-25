@@ -7,31 +7,33 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<FunewsManagementContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("FUNewsManagementDB")));
 
-
-
-
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ISystemAccountRepository, SystemAccountRepository>();
-
 builder.Services.AddScoped<INewsArticleRepository, NewsArticleRepository>();
+
+
 builder.Services.AddScoped<NewsArticleService>();
 builder.Services.AddScoped<AccountService>();
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<AuthService>();
-builder.Services.AddScoped<EmailService, EmailService>();
+builder.Services.AddScoped<EmailService>();
 
 
-
-builder.Services.AddSession();
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(60); 
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// C?u hình Middleware
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
@@ -40,11 +42,11 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
 
-app.UseAuthorization();
-app.UseSession();
+app.UseSession();        
+app.UseAuthentication();  
+app.UseAuthorization(); 
 
 app.MapControllerRoute(
     name: "default",

@@ -31,21 +31,33 @@ namespace DuyND_SE1815_Services.Services
         {
             if (account == null) throw new ArgumentNullException(nameof(account));
 
-            var lastAccount = await _accountRepository.GetLastAccountId();   
-            short lastId = lastAccount?.AccountId ?? 0;
-            short newId = (short)(lastId + 1);
-            account.AccountId = newId;
             try
             {
+                var lastAccount = await _accountRepository.GetLastAccountId();
+                short lastId = lastAccount?.AccountId ?? 0;
+                short newId = (short)(lastId + 1);
+                account.AccountId = newId;
+
                 await _accountRepository.AddAccount(account);
             }
-            catch (Exception ex)
+            catch (ArgumentNullException ex)
             {
-                Console.WriteLine($"Failed to add account to database: {ex.Message}");
+                Console.WriteLine($"Argument is null: {ex.Message}");
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"Invalid operation: {ex.Message}");
+            }
+            catch (Exception ex) 
+            {
+                Console.WriteLine($"An unexpected error occurred: {ex.Message}");
             }
         }
 
-
+        public async Task<List<SystemAccount>> SystemAccounts(string keyword)
+        {
+            return await _accountRepository.SearchAccounts(keyword);
+        }
         public async Task UpdateAccount(SystemAccount account)
         {
             await _accountRepository.UpdateAccount(account);

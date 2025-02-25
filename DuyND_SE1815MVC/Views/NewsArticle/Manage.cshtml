@@ -1,96 +1,85 @@
 ﻿@model IEnumerable<DuyND_SE1815_Data.Entities.NewsArticle>
-
+@using Microsoft.AspNetCore.Http
 @{
-    ViewData["Title"] = "Manage";
+    ViewData["Title"] = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var accountType = Context.Session.GetInt32("UserRole");
 }
 
-<h1>Manage</h1>
+<div class="container mt-4">
+    <h1 class="mb-4 text-primary">News</h1>
 
-<form method="get" asp-action="SearchNews">
-    <input type="text" name="key" placeholder="Nhập từ khóa tìm kiếm..." class="form-control" />
-    <button type="submit" class="btn btn-primary mt-2">Tìm kiếm</button>
-</form>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+    @if (accountType == 0)
+    {
+        <a asp-action="Reports" class="btn btn-warning mb-3">Reports New</a>
+    }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NewsTitle)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Headline)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NewsContent)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NewsSource)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NewsStatus)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedById)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ModifiedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedBy)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NewsTitle)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Headline)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreatedDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NewsContent)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NewsSource)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NewsStatus)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.UpdatedById)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ModifiedDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Category.CategoryName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreatedBy.AccountName)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.NewsArticleId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.NewsArticleId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.NewsArticleId">Delete</a>
-                </td>
-            </tr>
+    <div class="card p-3 mb-4">
+        <form method="get" asp-action="SearchNews" class="d-flex">
+            <input type="text" name="key" placeholder="Nhập từ khóa tìm kiếm..." class="form-control me-2" />
+            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+        </form>
+    </div>
+
+    <p>
+        <a asp-action="Create" class="btn btn-success">Create New</a>
+    </p>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.NewsTitle)</th>
+                    <th>@Html.DisplayNameFor(model => model.Headline)</th>
+                    <th style="width: 80%;">@Html.DisplayNameFor(model => model.NewsContent)</th>
+                    <th>@Html.DisplayNameFor(model => model.Category)</th>
+                    <th>@Html.DisplayNameFor(model => model.CreatedBy)</th>
+                    <th style="width: 20%;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.NewsTitle)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Headline)</td>
+                        <td>
+                            <div class="news-content" style="max-height: 100px; overflow: hidden;" data-full-height="false">
+                                @Html.DisplayFor(modelItem => item.NewsContent)
+                            </div>
+                            <button class="btn btn-link p-0 d-none" onclick="toggleContent(this)">Xem thêm</button>
+                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.Category.CategoryName)</td>
+                        <td>@Html.DisplayFor(modelItem => item.CreatedBy.AccountName)</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.NewsArticleId" class="btn btn-warning btn-sm w-100 mb-1">Edit</a>
+                            <a asp-action="Details" asp-route-id="@item.NewsArticleId" class="btn btn-info btn-sm w-100 mb-1">Details</a>
+                            <a asp-action="Delete" asp-route-id="@item.NewsArticleId" class="btn btn-danger btn-sm w-100">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelectorAll(".news-content").forEach(function(content) {
+            if (content.scrollHeight > 100) {
+                content.nextElementSibling.classList.remove("d-none");
+            }
+        });
+    });
+
+    function toggleContent(button) {
+        var content = button.previousElementSibling;
+        if (content.style.maxHeight === "100px") {
+            content.style.maxHeight = "none";
+            button.textContent = "Thu gọn";
+        } else {
+            content.style.maxHeight = "100px";
+            button.textContent = "Xem thêm";
         }
-    </tbody>
-</table>
+    }
+</script>
