@@ -1,5 +1,4 @@
 ﻿using DuyND_SE1815_Data.Entities;
-using DuyND_SE1815_Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DuyND_SE1815MVC.Controllers
@@ -29,7 +28,6 @@ namespace DuyND_SE1815MVC.Controllers
             }
 
             var category = _context.Categories.FirstOrDefault(c => c.CategoryId == id);
-
             if (category == null)
             {
                 return NotFound();
@@ -42,6 +40,29 @@ namespace DuyND_SE1815MVC.Controllers
         public IActionResult Create()
         {
             return View();
+        }
+
+        // API: Lấy thông tin category theo ID (Dùng cho AJAX)
+        [HttpGet]
+        public IActionResult GetCategory(int id)
+        {
+            var category = _context.Categories
+                .Select(c => new
+                {
+                    c.CategoryId,
+                    c.CategoryName,
+                    c.CategoryDesciption, 
+                    c.ParentCategoryId,
+                    c.IsActive
+                })
+                .FirstOrDefault(c => c.CategoryId == id);
+
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            return Json(category);
         }
 
         // POST: Category/Create
@@ -66,8 +87,7 @@ namespace DuyND_SE1815MVC.Controllers
                 return NotFound();
             }
 
-            var category = _context.Categories.Find((short)id);
-
+            var category = _context.Categories.Find(id);
             if (category == null)
             {
                 return NotFound();
@@ -78,22 +98,55 @@ namespace DuyND_SE1815MVC.Controllers
 
         // POST: Category/Edit/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, Category category)
+        public IActionResult Edit([FromForm] Category category, [FromForm] string NewParentCategory)
         {
-            if (id != category.CategoryId)
+            Console.WriteLine($"Category ID: {category.CategoryId}");
+
+            // Tìm category hiện tại từ cơ sở dữ liệu
+            var existingCategory = _context.Categories.Find(category.CategoryId);
+            if (existingCategory == null)
             {
-                return NotFound();
+                Console.WriteLine("Category not found!");
+                return View(category); // Trả lại nếu không tìm thấy danh mục
             }
 
-            if (ModelState.IsValid)
+            // Kiểm tra xem ID có tồn tại trong DB không
+            Console.WriteLine($"Existing Category Found: {existingCategory.CategoryId}, Name: {existingCategory.CategoryName}");
+
+            // Cập nhật thông tin cho category
+            existingCategory.CategoryName = category.CategoryName;
+            existingCategory.CategoryDesciption = category.CategoryDesciption;
+            existingCategory.IsActive = category.IsActive;
+
+            // Kiểm tra ParentCategoryId
+            if (!string.IsNullOrEmpty(NewParentCategory))
             {
-                _context.Categories.Update(category);
-                _context.SaveChanges();
-                return RedirectToAction(nameof(Index));
+                existingCategory.ParentCategoryId = short.Parse(NewParentCategory);  // Chuyển đổi ID Parent từ string sang short
+                Console.WriteLine($"Updated Parent Category ID: {existingCategory.ParentCategoryId}");
             }
-            return View(category);
+            else
+            {
+                existingCategory.ParentCategoryId = null;  // Nếu không có parent category thì set null
+            }
+
+            // Ghi log trước khi lưu
+            Console.WriteLine("Saving changes...");
+
+            try
+            {
+                _context.SaveChanges();  // Lưu thay đổi vào DB
+                Console.WriteLine("Changes saved successfully.");
+                return RedirectToAction("Index");  // Điều hướng lại sau khi thành công
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while saving changes: {ex.Message}");
+                return View(category);  // Nếu có lỗi, trả về trang edit
+            }
         }
+
+
+
 
         // GET: Category/Delete/5
         public IActionResult Delete(int? id)
@@ -129,4 +182,3 @@ namespace DuyND_SE1815MVC.Controllers
         }
     }
 }
-

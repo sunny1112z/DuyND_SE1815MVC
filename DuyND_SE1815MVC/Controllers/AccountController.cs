@@ -45,7 +45,7 @@ namespace DuyND_SE1815MVC.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(account); 
+                return View(account);
             }
             if (ModelState.IsValid)
             {
@@ -72,20 +72,20 @@ namespace DuyND_SE1815MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-               
+
                 int? currentRole = await _accountService.GetRoleById(account.AccountId);
                 Console.WriteLine($"Current Role: {currentRole}");
 
                 int? newRole = account.AccountRole;
 
-            
+
                 if (currentRole == 0 && newRole != 0)
                 {
                     ModelState.AddModelError("", "Không thể thay đổi vai trò của Admin.");
                     return View(account);
                 }
 
-                
+
                 if ((currentRole == 1 || currentRole == 2) && newRole == 0)
                 {
                     ModelState.AddModelError("", "Bạn không có quyền cấp quyền Admin.");
@@ -132,7 +132,7 @@ namespace DuyND_SE1815MVC.Controllers
             return RedirectToAction("Index");
         }
         [HttpGet]
-        public async Task<IActionResult> SearchAccounts(string key) 
+        public async Task<IActionResult> SearchAccounts(string key)
         {
             var accounts = await _accountService.SystemAccounts(key);
 
