@@ -1,63 +1,108 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var accountId = Context.Session.GetInt32("AccountId");
+    var userRole = Context.Session.GetInt32("UserRole");
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>@ViewData["Title"] - DuyND_SE1815MVC</title>
-	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-	<link rel="stylesheet" href="~/DuyND_SE1815MVC.styles.css" asp-append-version="true" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - DuyND_SE1815MVC</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
+    <link rel="stylesheet" href="~/DuyND_SE1815MVC.styles.css" asp-append-version="true">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
-<body>
-	<header>
-		<nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-			<div class="container-fluid">
-				<a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">DuyND_SE1815MVC</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-						aria-expanded="false" aria-label="Toggle navigation">
-					<span class="navbar-toggler-icon"></span>
-				</button>
-				<div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-					<ul class="navbar-nav flex-grow-1">
-						
-						<li class="nav-item">
-							<a class="nav-link text-dark" asp-controller="NewsArticle" asp-action="Index">News</a>
-						</li>
+<body class="d-flex flex-column min-vh-100">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+            <div class="container">
+                <!-- Logo -->
+                <a class="navbar-brand fw-bold text-primary" asp-controller="Home" asp-action="Index">
+                    <i class="fa-solid fa-house"></i> DuyND_SE1815MVC
+                </a>
 
-						@if (Context.Session.GetInt32("UserId") != null)
-						{
-							<li class="nav-item">
-								<form asp-controller="Auth" asp-action="Logout" method="post" style="display:inline;">
-									<button type="submit" class="btn btn-danger">Logout</button>
-								</form>
-							</li>
-						}
-						else
-						{
-							<li class="nav-item">
-								<a class="nav-link text-dark" asp-controller="Auth" asp-action="Login">Login</a>
-							</li>
-						}
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-					</ul>
-				</div>
-			</div>
-		</nav>
-	</header>
-	<div class="container">
-		<main role="main" class="pb-3">
-			@RenderBody()
-		</main>
-	</div>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="NewsArticle" asp-action="Index">
+                                <i class="fa-solid fa-newspaper"></i> News
+                            </a>
+                        </li>
+                    </ul>
 
-	<footer class="border-top footer text-muted">
-		<div class="container">
-			&copy; 2025 - DuyND_SE1815MVC - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-		</div>
-	</footer>
-	<script src="~/lib/jquery/dist/jquery.min.js"></script>
-	<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-	<script src="~/js/site.js" asp-append-version="true"></script>
-	@await RenderSectionAsync("Scripts", required: false)
+                    <ul class="navbar-nav">
+                        @if (Context.Session.GetInt32("UserId") != null)
+                        {
+                            @if (userRole == 1)
+                            {
+                                <li class="nav-item">
+                                    <a asp-controller="Account" asp-action="UpdateProfile" asp-route-id="@accountId"
+                                       class="btn btn-outline-info btn-sm me-2">
+                                        <i class="fa-solid fa-user-pen"></i> Update Profile
+                                    </a>
+                                </li>
+                            }
+                            @if (userRole == 2)
+                            {
+                                <li class="nav-item">
+                                    <a asp-controller="NewsArticle" asp-action="MyNewsHistory" asp-route-id="@accountId"
+                                       class="btn btn-outline-primary btn-sm me-2">
+                                        <i class="fa-solid fa-clock-rotate-left"></i> My News History
+                                    </a>
+                                </li>
+                            }
+                            <li class="nav-item">
+                                <form asp-controller="Auth" asp-action="Logout" method="post">
+                                    <button type="submit" class="btn btn-danger btn-sm">
+                                        <i class="fa-solid fa-sign-out-alt"></i> Logout
+                                    </button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="btn btn-success btn-sm" asp-controller="Auth" asp-action="Login">
+                                    <i class="fa-solid fa-sign-in-alt"></i> Login
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container mt-4 flex-grow-1">
+        <main role="main">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-light text-center py-3 mt-4 shadow-sm">
+        <div class="container">
+            <small>
+                &copy; 2025 - DuyND_SE1815MVC |
+                <a asp-controller="Home" asp-action="Privacy" class="text-decoration-none">Privacy Policy</a>
+            </small>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

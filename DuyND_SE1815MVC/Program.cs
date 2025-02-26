@@ -30,7 +30,13 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
-
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(60);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+});
 var app = builder.Build();
 
 // C?u hình Middleware
@@ -46,7 +52,8 @@ app.UseRouting();
 
 app.UseSession();        
 app.UseAuthentication();  
-app.UseAuthorization(); 
+app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "default",

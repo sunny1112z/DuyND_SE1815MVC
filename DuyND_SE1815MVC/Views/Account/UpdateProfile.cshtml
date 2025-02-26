@@ -1,0 +1,63 @@
+﻿@model DuyND_SE1815_Data.Entities.SystemAccount
+
+@{
+    ViewData["Title"] = "UpdateProfile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var accountId = Context.Session.GetInt32("AccountId");
+    var userRole = Context.Session.GetInt32("UserRole");
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm">
+        <div class="card-header bg-warning text-white">
+            <h3 class="mb-0"><i class="bi bi-pencil-square"></i> Edit Account</h3>
+        </div>
+        <div class="card-body">
+            <form asp-action="UpdateProfile" method="post">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                <input type="hidden" asp-for="AccountId" />
+                <div class="mb-3">
+                    <label asp-for="AccountName" class="form-label fw-bold"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person"></i></span>
+                        <input asp-for="AccountName" class="form-control" />
+                    </div>
+                    <span asp-validation-for="AccountName" class="text-danger"></span>
+                </div>
+
+       
+                <div class="mb-3">
+                    <label asp-for="AccountEmail" class="form-label fw-bold"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                        <input asp-for="AccountEmail" class="form-control" />
+                    </div>
+                    <span asp-validation-for="AccountEmail" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="AccountPassword" class="form-label fw-bold">Mật khẩu</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                        <input asp-for="AccountPassword" type="password" class="form-control" value="@Model.AccountPassword" />
+                    </div>
+                    <span asp-validation-for="AccountPassword" class="text-danger"></span>
+                </div>
+
+                <input type="hidden" asp-for="AccountRole" value="@Model.AccountRole" />
+
+                <input type="hidden" asp-for="IsActive" value="@Model.IsActive" />
+
+                <div class="d-flex justify-content-between">
+                    <a asp-action="Index" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Back to List</a>
+                    <button type="submit" class="btn btn-warning"><i class="bi bi-save"></i> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

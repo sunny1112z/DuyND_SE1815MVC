@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Category List";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var accountId = Context.Session.GetInt32("AccountId");
 }
 
 <!-- Tải jQuery trước để tránh lỗi -->
@@ -15,6 +16,7 @@
         <button class="btn btn-success shadow" onclick="openCreateModal()">
             <i class="bi bi-plus-lg"></i> Create New
         </button>
+       
     </div>
 
     <div class="table-responsive">

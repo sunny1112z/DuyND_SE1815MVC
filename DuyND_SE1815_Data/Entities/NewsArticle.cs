@@ -6,7 +6,7 @@ namespace DuyND_SE1815_Data.Entities;
 
 public partial class NewsArticle
 {
-    public string NewsArticleId { get; set; } = null!;
+    public string?NewsArticleId { get; set; } = null!;
 
     public string? NewsTitle { get; set; }
 

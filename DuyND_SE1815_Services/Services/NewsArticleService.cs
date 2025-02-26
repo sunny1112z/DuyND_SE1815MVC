@@ -1,4 +1,5 @@
 ﻿using DuyND_SE1815_Data.Entities;
+using DuyND_SE1815_Data.Repositories.Implementations;
 using DuyND_SE1815_Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -70,5 +71,17 @@ namespace DuyND_SE1815_Services.Services
         }
         public async Task<List<NewsArticle>> GetNewsByAuthorId(short? authorId) => await _newsRepository.GetNewsByAuthorId(authorId);
         public async Task<List<NewsArticle>> GetReportByDateRange(DateTime startDate, DateTime endDate) => await _newsRepository.GetReportByDateRange(startDate, endDate);
+      
+        public async Task<List<NewsArticle>> GetNewsHistoryByAuthorId(short authorId)
+        {
+            return await _newsRepository.GetNewsByAuthorId(authorId);
+        }
+
+        public async Task<List<SystemAccount>> GetAllLecturers()
+        {
+            return await _newsRepository.GetAllLecturers();
+        }
+      
+        
     }
 }

@@ -1,0 +1,71 @@
+﻿@model List<DuyND_SE1815_Data.Entities.NewsArticle>
+
+@{
+    ViewData["Title"] = "My News History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2 class="text-primary"><i class="fa-solid fa-clock-rotate-left"></i> My News History</h2>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-warning mt-3">
+            <i class="fa-solid fa-exclamation-circle"></i> You have not created any news articles yet.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive mt-3">
+            <table class="table table-hover table-bordered">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Title</th>
+                        <th>Category</th>
+                        <th>Created Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var news in Model)
+                    {
+                        <tr>
+                            <td>@news.NewsTitle</td>
+                            <td>@news.Category?.CategoryName</td>
+                            <td>@news.CreatedDate?.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>
+                                @if (news.NewsStatus == true)
+                                {
+                                    <span class="badge bg-success">Published</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Draft</span>
+                                }
+                            </td>
+                            <td>
+                                <a asp-action="Details" asp-route-id="@news.NewsArticleId" class="btn btn-sm btn-info">
+                                    <i class="fa-solid fa-eye"></i> View
+                                </a>
+                                <a asp-action="Edit" asp-route-id="@news.NewsArticleId" class="btn btn-sm btn-warning">
+                                    <i class="fa-solid fa-edit"></i> Edit
+                                </a>
+                                <form asp-action="Delete" asp-route-id="@news.NewsArticleId" method="post" class="d-inline"
+                                      onsubmit="return confirm('Are you sure you want to delete this news article?');">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fa-solid fa-trash"></i> Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <a asp-action="Create" class="btn btn-success mt-3">
+        <i class="fa-solid fa-plus"></i> Create New Article
+    </a>
+</div>

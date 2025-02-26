@@ -16,6 +16,8 @@ namespace DuyND_SE1815_Data.Repositories.Interfaces
         Task<NewsArticle> GetLastNewsArticle();
         Task<List<NewsArticle>> GetNewsByAuthorId(short? authorId);
         Task<List<NewsArticle>> GetReportByDateRange(DateTime startDate, DateTime endDate);
+        Task<List<NewsArticle>> GetNewsHistoryByAuthorId(short authorId);
+        Task<List<SystemAccount>> GetAllLecturers();
 
     }
 }

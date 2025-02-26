@@ -1,80 +1,94 @@
 ﻿@model DuyND_SE1815_Data.Entities.NewsArticle
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit News Article";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
+<div class="container mt-4">
+    <h2 class="mb-4 text-primary">Edit News Article</h2>
 
-<h4>NewsArticle</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+    <div class="card shadow-sm p-4">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
             <input type="hidden" asp-for="NewsArticleId" />
-            <div class="form-group">
-                <label asp-for="NewsTitle" class="control-label"></label>
-                <input asp-for="NewsTitle" class="form-control" />
-                <span asp-validation-for="NewsTitle" class="text-danger"></span>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="NewsTitle" class="form-label fw-bold"></label>
+                        <input asp-for="NewsTitle" class="form-control" />
+                        <span asp-validation-for="NewsTitle" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Headline" class="form-label fw-bold"></label>
+                        <input asp-for="Headline" class="form-control" />
+                        <span asp-validation-for="Headline" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="CreatedDate" class="form-label fw-bold"></label>
+                        <input asp-for="CreatedDate" type="date" class="form-control" />
+                        <span asp-validation-for="CreatedDate" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NewsContent" class="form-label fw-bold"></label>
+                        <textarea asp-for="NewsContent" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="NewsContent" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NewsSource" class="form-label fw-bold"></label>
+                        <input asp-for="NewsSource" class="form-control" />
+                        <span asp-validation-for="NewsSource" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group mb-3">
+                        <label asp-for="CategoryId" class="form-label fw-bold"></label>
+                        <input asp-for="CategoryId" class="form-control" value="1" />
+                        <span asp-validation-for="CategoryId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="NewsStatus" class="form-label fw-bold"></label>
+                        <input asp-for="NewsStatus" class="form-control" />
+                        <span asp-validation-for="NewsStatus" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="CreatedById" class="form-label fw-bold"></label>
+                        <input asp-for="CreatedById" class="form-control" value="1" />
+                        <span asp-validation-for="CreatedById" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="UpdatedById" class="form-label fw-bold"></label>
+                        <input asp-for="UpdatedById" class="form-control" value="1" />
+                        <span asp-validation-for="UpdatedById" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="ModifiedDate" class="form-label fw-bold"></label>
+                        <input asp-for="ModifiedDate" type="date" class="form-control" />
+                        <span asp-validation-for="ModifiedDate" class="text-danger"></span>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Headline" class="control-label"></label>
-                <input asp-for="Headline" class="form-control" />
-                <span asp-validation-for="Headline" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedDate" class="control-label"></label>
-                <input asp-for="CreatedDate" class="form-control" />
-                <span asp-validation-for="CreatedDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NewsContent" class="control-label"></label>
-                <input asp-for="NewsContent" class="form-control" />
-                <span asp-validation-for="NewsContent" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NewsSource" class="control-label"></label>
-                <input asp-for="NewsSource" class="form-control" />
-                <span asp-validation-for="NewsSource" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <input asp-for="CategoryId" class="form-control" value="1" />
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="NewsStatus" class="control-label"></label>
-                <input asp-for="NewsStatus" class="form-control" />
-                <span asp-validation-for="NewsStatus" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedById" class="control-label"></label>
-                <input asp-for="CreatedById" class="form-control" value="1" />
-                <span asp-validation-for="CreatedById" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedById" class="control-label"></label>
-                <input asp-for="UpdatedById" class="form-control" value="1"/>
-                <span asp-validation-for="UpdatedById" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ModifiedDate" class="control-label"></label>
-                <input asp-for="ModifiedDate" class="form-control" />
-                <span asp-validation-for="ModifiedDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary px-4">Save</button>
+                <a asp-action="Manage" class="btn btn-outline-secondary ms-2">Back to List</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Manage">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

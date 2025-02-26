@@ -1,7 +1,11 @@
 ﻿using DuyND_SE1815_Data.Entities;
 using DuyND_SE1815_Services.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace DuyND_SE1815MVC.Controllers
 {
@@ -47,12 +51,9 @@ namespace DuyND_SE1815MVC.Controllers
             {
                 return View(account);
             }
-            if (ModelState.IsValid)
-            {
-                await _accountService.AddAccount(account);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(account);
+
+            await _accountService.AddAccount(account);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Account/Edit/5
@@ -72,12 +73,10 @@ namespace DuyND_SE1815MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-
                 int? currentRole = await _accountService.GetRoleById(account.AccountId);
                 Console.WriteLine($"Current Role: {currentRole}");
 
                 int? newRole = account.AccountRole;
-
 
                 if (currentRole == 0 && newRole != 0)
                 {
@@ -85,13 +84,11 @@ namespace DuyND_SE1815MVC.Controllers
                     return View(account);
                 }
 
-
                 if ((currentRole == 1 || currentRole == 2) && newRole == 0)
                 {
                     ModelState.AddModelError("", "Bạn không có quyền cấp quyền Admin.");
                     return View(account);
                 }
-
 
                 await _accountService.UpdateAccount(account);
                 return RedirectToAction(nameof(Index));
@@ -99,6 +96,61 @@ namespace DuyND_SE1815MVC.Controllers
 
             return View(account);
         }
+        public ActionResult EditProfile()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Login");
+            }
+
+            var account = _accountService.GetAccountById((short)userId);
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            return View(account);
+        }
+        public async Task<IActionResult> UpdateProfile()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            var account = await _accountService.GetAccountById((short)userId.Value);
+            if (account == null)
+            {
+                return NotFound();
+            }
+
+            return View(account);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateProfile(SystemAccount account)
+        {
+            var accountId = HttpContext.Session.GetInt32("UserId");
+            if (accountId == null || account.AccountId != accountId.Value)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(account);
+            }
+
+            await _accountService.UpdateAccount(account); 
+
+            return RedirectToAction("Index","Category");
+        }
+
+
 
 
 
@@ -119,18 +171,18 @@ namespace DuyND_SE1815MVC.Controllers
         {
             try
             {
-
                 await _accountService.DeleteAccount(id);
             }
             catch (Exception e)
             {
                 TempData["ErrorMessage"] = e.Message;
                 return View("CannotDelete");
-
             }
 
             return RedirectToAction("Index");
         }
+
+        // GET: Tìm kiếm tài khoản
         [HttpGet]
         public async Task<IActionResult> SearchAccounts(string key)
         {
@@ -144,7 +196,5 @@ namespace DuyND_SE1815MVC.Controllers
 
             return View("SearchAccounts", accounts);
         }
-
-
     }
 }

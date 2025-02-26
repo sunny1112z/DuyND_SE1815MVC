@@ -17,5 +17,7 @@ namespace DuyND_SE1815_Data.Repositories.Interfaces
         Task DeleteAccount(short id);
         Task<SystemAccount?> GetLastAccountId();
         Task<List<SystemAccount>> SearchAccounts(string keyword);
+    
+
     }
 }

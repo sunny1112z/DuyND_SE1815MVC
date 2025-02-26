@@ -36,6 +36,7 @@ namespace DuyND_SE1815MVC.Controllers
             {
                 HttpContext.Session.SetInt32("UserId", user.AccountId);
                 HttpContext.Session.SetInt32("UserRole", user.AccountRole ?? -1);
+
                 if (user.AccountRole == 0)
                 {
                     return RedirectToAction("Index", "Account");

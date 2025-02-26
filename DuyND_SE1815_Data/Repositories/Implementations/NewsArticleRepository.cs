@@ -87,7 +87,21 @@ namespace DuyND_SE1815_Data.Repositories.Implementations
                 .Where(n => n.CreatedById == authorId)
                 .ToListAsync();
         }
-
+        public async Task<List<NewsArticle>> GetNewsHistoryByAuthorId(short authorId)
+        {
+            return await _context.NewsArticles
+                .Include(n => n.Category)
+                .Include(n => n.CreatedBy)
+                .Where(n => n.CreatedById == authorId)
+                .OrderByDescending(n => n.CreatedDate)
+                .ToListAsync();
+        }
+        public async Task<List<SystemAccount>> GetAllLecturers()
+        {
+            return await _context.SystemAccounts
+                .Where(a => a.AccountRole == 2) 
+                .ToListAsync();
+        }
         public async Task<List<NewsArticle>> GetReportByDateRange(DateTime startDate, DateTime endDate)
         {
             return await _context.NewsArticles
